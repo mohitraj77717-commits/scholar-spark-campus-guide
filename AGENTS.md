@@ -28,3 +28,11 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+
+- Frontend only: never add Supabase, Firebase or any backend to this repo — the backend is a separate Flask service.
+- All backend calls go through `createApiClient` in `src/services/api.ts`; components never call `fetch` — so the Flask backend plugs in via `VITE_API_BASE_URL` alone.
+- Mock responses live only in `src/services/mock/` and implement the same `ApiClient` interface — keeps demo data separate and swappable.
+- Chat state stays in memory in `src/hooks/use-chat.ts`; persistence belongs to the backend.
+- Keep `src/test/api-service.test.ts` in sync with the API contract documented in README.md.
