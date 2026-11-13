@@ -18,5 +18,5 @@ export function resolveUseMock(baseUrl: string, flag: string | undefined): boole
   return !baseUrl;
 }
 
-export const API_BASE_URL = normalizeBaseUrl(env.VITE_API_BASE_URL);
-export const USE_MOCK_API = resolveUseMock(API_BASE_URL, env.VITE_USE_MOCK_API);
+export const API_BASE_URL = normalizeBaseUrl(env["VITE_API_BASE_URL"]);
+export const USE_MOCK_API = resolveUseMock(API_BASE_URL, env["VITE_USE_MOCK_API"]);

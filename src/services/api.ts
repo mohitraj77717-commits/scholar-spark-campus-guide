@@ -19,7 +19,7 @@ import type {
 import { mockApi } from "./mock/mockApi";
 
 export class ApiError extends Error {
-  status?: number;
+  status?: number | undefined;
   constructor(message: string, status?: number) {
     super(message);
     this.name = "ApiError";
@@ -64,7 +64,7 @@ function normalizeSources(raw: unknown): Source[] {
 function unwrapList<T>(data: unknown, key: string): T[] {
   if (Array.isArray(data)) return data as T[];
   if (data && typeof data === "object" && Array.isArray((data as Record<string, unknown>)[key])) {
-    return (data as Record<string, T[]>)[key];
+    return (data as Record<string, T[]>)[key] ?? [];
   }
   return [];
 }

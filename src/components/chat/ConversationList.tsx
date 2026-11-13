@@ -44,7 +44,7 @@ export function ConversationList({
 }: {
   conversations: ConversationSummary[];
   status: "loading" | "ready" | "error";
-  error?: string;
+  error?: string | undefined;
   activeId: string | null;
   onSelect: (id: string) => void;
   onRename: (c: ConversationSummary) => void;

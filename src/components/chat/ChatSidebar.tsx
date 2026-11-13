@@ -9,7 +9,7 @@ import { ConversationList } from "./ConversationList";
 export interface ChatSidebarProps {
   conversations: ConversationSummary[];
   listStatus: "loading" | "ready" | "error";
-  listError?: string;
+  listError?: string | undefined;
   activeId: string | null;
   profile: StudentProfile;
   mockMode: boolean;

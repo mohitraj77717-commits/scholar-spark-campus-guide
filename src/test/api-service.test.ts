@@ -13,6 +13,9 @@ function jsonResponse(body: unknown, status = 200) {
   });
 }
 
+type Call = [string, RequestInit & { body: string; method?: string }];
+const call = (fn: ReturnType<typeof vi.fn>, i: number) => fn.mock.calls[i] as Call;
+
 function clientWith(fetchImpl: ReturnType<typeof vi.fn>) {
   return createApiClient({ baseUrl: BASE, useMock: false, fetchImpl: fetchImpl as unknown as typeof fetch });
 }
@@ -64,7 +67,7 @@ describe("student onboarding payload", () => {
     });
     const res = await clientWith(fetchImpl).createStudent(payload);
     expect(res.student_id).toBe("s1");
-    const [url, init] = fetchImpl.mock.calls[0];
+    const [url, init] = call(fetchImpl, 0);
     expect(url).toBe(`${BASE}/api/students`);
     expect(init.method).toBe("POST");
     expect(JSON.parse(init.body)).toEqual(payload);
@@ -77,7 +80,7 @@ describe("chat endpoints", () => {
       jsonResponse({ conversation_id: "c9", reply: "Hi", sources: [{ title: "Notice", url: "https://x.test" }] }),
     );
     const res = await clientWith(fetchImpl).sendMessage({ conversation_id: null, message: "Hello" });
-    const [url, init] = fetchImpl.mock.calls[0];
+    const [url, init] = call(fetchImpl, 0);
     expect(url).toBe(`${BASE}/api/chat`);
     expect(init.method).toBe("POST");
     expect(JSON.parse(init.body)).toEqual({ conversation_id: null, message: "Hello" });
@@ -100,10 +103,10 @@ describe("chat endpoints", () => {
     await client.getMessages("c1");
     await client.deleteConversation("c1");
 
-    expect(fetchImpl.mock.calls[0][0]).toBe(`${BASE}/api/conversations`);
-    expect(fetchImpl.mock.calls[1][0]).toBe(`${BASE}/api/conversations/c1/messages`);
-    expect(fetchImpl.mock.calls[2][0]).toBe(`${BASE}/api/conversations/c1`);
-    expect(fetchImpl.mock.calls[2][1].method).toBe("DELETE");
+    expect(call(fetchImpl, 0)[0]).toBe(`${BASE}/api/conversations`);
+    expect(call(fetchImpl, 1)[0]).toBe(`${BASE}/api/conversations/c1/messages`);
+    expect(call(fetchImpl, 2)[0]).toBe(`${BASE}/api/conversations/c1`);
+    expect(call(fetchImpl, 2)[1].method).toBe("DELETE");
   });
 
   it("turns server errors into an ApiError with the server's message", async () => {

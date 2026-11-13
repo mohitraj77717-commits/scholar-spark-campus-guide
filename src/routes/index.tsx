@@ -15,7 +15,7 @@ import { STUDENT_YEAR, type CourseId } from "@/types/campus";
 
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>): { edit?: boolean } =>
-    search.edit === true || search.edit === "true" ? { edit: true } : {},
+    search["edit"] === true || search["edit"] === "true" ? { edit: true } : {},
   head: () => ({
     meta: [
       { title: "Campus AI — Your personal university assistant" },
@@ -116,7 +116,7 @@ function OnboardingPage() {
     else setStep((s) => s + 1);
   };
 
-  const current = STEPS[step];
+  const current = STEPS[step] ?? STEPS[0] ?? { eyebrow: "", title: "", description: "" };
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
