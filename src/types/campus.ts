@@ -35,7 +35,17 @@ export interface StudentResponse {
 /* ---------------------------------------------------------------------- auth */
 
 /** Roles the backend can assign. Picking a role in the UI never grants it. */
-export type UserRole = "student" | "teacher";
+export type UserRole = "student" | "teacher" | "admin";
+
+/** Student onboarding answers as stored by the backend (returned by GET /api/auth/me). */
+export interface StoredStudentProfile {
+  student_id: string;
+  course: CourseId;
+  year: number;
+  interests: string[];
+  event_notification_preference: boolean;
+  academic_notification_preference: boolean;
+}
 
 export interface AuthUser {
   id: string;
@@ -43,13 +53,22 @@ export interface AuthUser {
   email: string;
   role: UserRole;
   department?: string | null;
+  /** Students only: their saved course setup, or null if they haven't finished it. */
+  student_profile?: StoredStudentProfile | null;
 }
 
 export interface SignInRequest {
   email: string;
   password: string;
-  /** The role the person chose on the role screen; the backend must verify it. */
+  /** The login screen used. Each role has its own endpoint; the backend must verify the account's role. */
   role: UserRole;
+}
+
+/** Public registration only ever creates student accounts. */
+export interface RegisterStudentRequest {
+  name: string;
+  email: string;
+  password: string;
 }
 
 export interface SignInResponse {
@@ -117,6 +136,12 @@ export interface SubmissionInput {
   registration_url: string;
   audience: CourseId[];
   file: File | null;
+}
+
+export interface ReviewDecision {
+  decision: "approved" | "rejected";
+  /** Required when rejecting so the teacher knows what to fix. */
+  note: string;
 }
 
 export interface TeacherSubmission {
@@ -194,6 +219,7 @@ export interface ApiClient {
 
   // authentication & role verification
   signIn(request: SignInRequest): Promise<SignInResponse>;
+  registerStudent(request: RegisterStudentRequest): Promise<SignInResponse>;
   getCurrentUser(): Promise<AuthUser>;
   signOut(): Promise<void>;
 
@@ -208,4 +234,9 @@ export interface ApiClient {
   listMySubmissions(): Promise<TeacherSubmission[]>;
   getMySubmission(submissionId: string): Promise<TeacherSubmission>;
   createSubmission(input: SubmissionInput): Promise<TeacherSubmission>;
+
+  // admin approvals
+  listReviewQueue(): Promise<TeacherSubmission[]>;
+  getReviewSubmission(submissionId: string): Promise<TeacherSubmission>;
+  reviewSubmission(submissionId: string, decision: ReviewDecision): Promise<TeacherSubmission>;
 }

@@ -15,8 +15,11 @@ export const ENDPOINTS = {
   conversation: (c: string) => `/api/conversations/${id(c)}`,
   conversationMessages: (c: string) => `/api/conversations/${id(c)}/messages`,
 
-  // proposed — authentication & role verification
-  signIn: "/api/auth/login",
+  // proposed — authentication & role verification (one login endpoint per role)
+  studentSignIn: "/api/auth/student/login",
+  studentRegister: "/api/auth/student/register",
+  teacherSignIn: "/api/auth/teacher/login",
+  adminSignIn: "/api/auth/admin/login",
   currentUser: "/api/auth/me",
   signOut: "/api/auth/logout",
 
@@ -30,4 +33,9 @@ export const ENDPOINTS = {
   // proposed — teacher submissions (approval status is read-only for teachers)
   mySubmissions: "/api/teacher/submissions",
   mySubmission: (s: string) => `/api/teacher/submissions/${id(s)}`,
+
+  // proposed — admin approvals
+  reviewQueue: "/api/admin/submissions",
+  reviewSubmission: (s: string) => `/api/admin/submissions/${id(s)}`,
+  reviewDecision: (s: string) => `/api/admin/submissions/${id(s)}/review`,
 } as const;
