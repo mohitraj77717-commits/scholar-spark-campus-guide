@@ -1,6 +1,6 @@
 /**
- * Onboarding answers, remembered on this device only so students aren't asked twice.
- * This is a UI preference, not a database: the backend copy lives behind POST /api/students.
+ * Onboarding answers cached on this device so pages render quickly.
+ * The backend copy (POST /api/students, returned again by GET /api/auth/me) is the source of truth.
  */
 import { useSyncExternalStore } from "react";
 
@@ -39,8 +39,13 @@ export function saveProfile(profile: StudentProfile) {
 }
 
 export function clearProfile() {
+  if (typeof window === "undefined") return;
   window.localStorage.removeItem(KEY);
   emit();
+}
+
+export function getProfile(): StudentProfile | null {
+  return read();
 }
 
 function subscribe(listener: () => void) {
